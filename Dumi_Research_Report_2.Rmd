@@ -1,0 +1,171 @@
+---
+title: "Dumi Yambira. Research Report 2"
+author: "Dumi Yambira"
+date: "4/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Introduction
+##  Concept Measurement
+
+In this Research Report, my intention is to use the Afrobarometer data survey round 7 in Ghana. In light of the survey titled "The quality of democracy and governance in Ghana", for my bivariate analysis will focus on question 97 (Grouping variable) and question 44 (Outcome variable), these I will expand below. In this bivariate analysis, my hypothesis is that, those who have Higher education can perceive corruption better than those who do not have higher education in Ghana. As such, my null hypothesis is that the perception of corruption cannot be determined by the level of education one has, so there is no correlation between the two.
+
+I chose this method of bivariate analysis because in africa, it is a general rule of thumb that corruption has had a detrimental effect on the development of the economy. For my grouping variable which can be classified independent variable as well, I selected the education criteria based on the notion that the majority of the population has received some level of education and therefore they should have an understanding of the concept of corruption and to be able to identify it being practiced when it comes to public and private governance. The question is phrased as "WHAT IS YOUR HIGHEST LEVEL OF EDUCATION". Hence I want to determine whether levels of literacy as outlined by the question influence how people perceive government departments in relation to corruption. 
+
+For the dependent variable or outcome variable, I the question phrased as "HOW MANY OF THE FOLLOWING PEOPLE DO YOU THINK ARE INVOLVED IN CORRUPTION, OR HAVEN`T YOU HEARD ENOUGH ABOUT THEM TO SAY". I will be using this variable because not only do I see it as apolitical but my assumption is that the majority of the participants in this survey will respond to as this is a matter that they have encountered. The merit of this variable is thus it might have been what every participant has encountered either face to face or via means of media. The question now lies in determining how the people and their levels of education perceive this, hence this attitudinal response qualifies this variable as dependent to the education criteria. 
+I believe this bivariate analysis does carry a good weight in regards to validity and reliability. In terms of validity, the purpose of the research is validated by the reason that, the variables chosen of education and perception of corruption appear to have a good correlation and will be relevant in my study. Then on the reliability part, I believe from there will be a consistency of the results derived from my grouping variable e.g the perception of those in the completed High school category and those in the tertiary education should be similar in regards to their attitude/views on the people whom they think are involved in corruption. 
+
+### Recoding Data
+```{r, Question 2, echo=TRUE}
+### Uninstall a package that reads into the merged data and then create a table. 
+
+### Read r_7 merged data and set it up
+library(haven)
+My_data <- read_spss("r7_merged_data_34ctry.release.sav")
+names(My_data) <- tolower(names(My_data))  ### convert to lower case
+```
+
+I will first create a country inorder to specify the country of my study. Then will create a vector of my grouping variable which I will make dichotomous, meaning into two groups. 
+
+``` {r, Narrowing the data, echo = TRUE}
+table(My_data$country)
+attributes(My_data$country)
+
+My_country.f <- as_factor(My_data$country) ### Convert My_data$country into factor so that the column                                                                               titles for countries become character titles for easy identification.
+
+table(My_country.f)  ### Check to see if column names are now given country names
+```
+
+### GROUPING VARIABLE
+Now that I have managed to create a factor, the next step is to create a grouping variable through factor recoding and slicing some observations so as to get the data which I want to work with.My aim is to further classify the groups into small categories. The reduction of my levels from 13 to 3 will give my research a better way of analysing my data. Hence I am in a better position to classify the observations.
+
+``` {r, creating the variable, echo = TRUE}
+table(My_data$q97)   ### Use the table function to formulate a table which generates discrete data
+
+My_group.f <- as_factor(My_data$q97) # Convert the class of my grouping variable to factor, since this                                                                          is the best way to store ordinal data
+
+My_group.f <- factor(My_data$q97) #Convert using the factor function so that my data can generate a columns with correlating obseravtions beneath.
+
+table(My_group.f) # Use table function to generate data in the factor class.This is preferrable because it allows easy identification of my classified discrete data.
+
+levels(My_group.f) <- list("Primary_education" = c(1:3),
+                           "High_education" = c(4:5),
+                           "Tertiary_education" =c(6:9)) 
+table(My_group.f) #Use table function to check whether my data has been classified according to the way I want and that which is easier. 
+
+# create a dichotomous variable, do this by adding High education and Tertiary education together
+
+My_group.f2 <- factor(My_data$q97)
+levels(My_group.f2) <- list("Primary_education" = c(1:3),
+                            "Higher_education" = c(4, 5, 6, 9))
+table(My_group.f2)
+```
+
+In the previous chunk code, my reason for classifying my data into three categories was because I wanted to find out which category has the highest number of people. Hence it turned out to be the primary category and in order to create a dichotomous variable, it meant that I had to distribute the outcome evenly so as to get a desirable outcome. In creating the dichotomous variable, I added High education and Tertiary education together in order to come up with Higher education. My reason was based on the idea that high school education and tertiary education have somewhat a strong correlation, based on observations, I believed the two should be joined together. Another reason for supporting this is, the level of educational skills acquired from high school and onwards differ from those in primary. In the latter, people are mainly taught basic skills which improve their literacy capabilities whereas from High school and onwards, people are now taught the importance of skill application and a deeper level of analysis in terms on science, history, economy and this affects their perception of day to day life.  
+
+```{r, Outcome Variable, echo= TRUE}
+# View my proposed outcome variable
+table(My_data$q44e)
+
+# create a factor then I will recode, but first, convert the My_data$q44a from haven labelled to a factor.
+My_outcome.f1 <- as_factor(My_data$q44e)
+
+My_outcome.f1 <- factor(My_data$q44e)
+levels(My_outcome.f1) <- list( "None" = 0,
+                               "Some_of_them" = 1,
+                               "Most_of_them" = 2,
+                               "All_of_them" = 3,
+                               "Don`t know" = 9)
+# Make outcome variable dichotomous
+My_outcome.f2 <- factor(My_data$q44e)
+levels(My_outcome.f2) <- list ("Less_corruption" = c(1),
+                             "More_corruption" = c(2:3))
+
+table(My_outcome.f2)
+```
+
+On my outcome variable, I first listed all of the responses so as to determine the which ones carried the most. From my observation I decided to remove the responses classified under "None" and those classified under "Don`t know". My reason was driven by the realisation that, "None" is difficult to classify as a response because one will not be sure of whether they actually do not know of anyone who is corrupt or whether it was just a prompt response just to pass on to the next question. In stastics, the norm is that te level of responses is structured in an ordinal data format and hence 1 usually resembles the worst response or the least response whilst the highest numbers like 4 or 5 resembles either the best response or highest level of responding to any given question. Since the question on corruption is a sensitive topic, I suggested that the response of "None" classified by 0 is difficult to classfiy. 
+
+For my dichotomous variable, I decided to combine responses number 2 and 3 against responses number 1. This is because the total of responses from number 1 produced a significant amount of the outcome I needed inorder to carry on with generating data required ahead in my bivariate analysis. As my analysis is focusing on corruption, I classified my dichotomous variables under the titles Less_corruption and More_corruption because I believe in any given society of governance, corruption exists. Though what I am to find out is, the extent of the corruption that exists within a certain level / department of the government, this would be then determined by the type of grouping variable I selected of educated people. As I want to assess whether a group of people who have achieved a certain level in education can observe or notice some corrupt behavior in a governmental department.   
+
+### Creation of graphs
+``` {r, Univariate graphs, echo = TRUE}
+# Create a histogram for my grouping variable
+# First convert the factor to numeric
+Educated <- as.numeric(My_group.f2)
+Educated_People <- table(Educated)
+barplot(Educated_People, ylab = "Number of People", xlab = "Educated Citizens", names.arg = c("Less", "Highly"), main = "Educated People in Ghana")
+```
+
+To visualize my data I used a barplot because it will give me a desired outcome. At first I had opted for a histogram but the ouput from the histogram did not produce a neat layout since my bars were only two. By switching to barplot and grading them, I managed to generate a better data visualization from my grouping variable. From the plot, it can be deduced that the number of highly educated people from the sample is greater than those who are less educated. This indicates that there is a good literacy rate in Ghana and that academically, the country is making progress in educating its citizens. This is based on the higher education bar being surpassing the less education. 
+
+```{r, Outcome variable, echo= TRUE}
+# Convert the class of the variable from factor to numeric
+Perception <- as.numeric(My_outcome.f2)
+Corruption_responses <- table(Perception)
+barplot(Corruption_responses, ylab = "Perceptions", xlab = "Corruption", names.arg = c("Minimum", "More"), main = "Perception of Police Corruption")
+
+```
+
+On this outcome variable, I first converted my "Perception" variable from factor to numeric so that it can be possible to generate the desired plot. The table function allowed me to put the dichotomous results in a new variable called Corruption_responses. Similar to my grouping variable, the barplot generates a presentation that makes data classification easier to intepret.
+
+## BIVARIATE ANALYSIS
+### Question 1
+``` {r, Contigency table, echo= TRUE}
+# Create a contigency table with dichotomous variable for grouping variable against a detailed responses
+table(My_outcome.f1, My_group.f2, exclude = NA)
+
+# Create a proportion table inorder to get the result in percentile format and it is easy to translate too
+round(prop.table(table(My_outcome.f1, My_group.f2, exclude = NA) * 100, margin = 2), digits = 2)
+
+# Create a mosaic plot 
+# Because the initial outcome variable includes NAs, adjust it and remove NAs
+My_table <- round(prop.table(table(My_outcome.f1, My_group.f2, exclude = NA) * 100, margin = 2), digits = 2)
+
+mosaicplot(t(My_table), main ="Perception_of_corruption", las = 1, color = TRUE)
+```
+
+On the first question, generating a contigency table is important because it allows the analyst to intepret the correlation. By generating a contigency table, I have decided to put it in percentage format so it becomes easy to read using the prop.table function. Hence through generating the table, interpreting the data from a bivariate persepective is made easier. For example, it can be deduced that from all the level of responses regarding Corruption, the group of people with higher education had more responses. On the perception of corruption, it appears that for responses classified under "Most of them" and "All of them", the group of people with higher education had higher responses. This suggests that because of the numeric advantage where there are more people in the higher education criteria than the less education, it likely influences the outcome of responses. From the results on the contigency table, the perception of Ghananian police being more corrupt is mainly made by those who have a higher level of education.
+
+From the mosaic plot, data visualisation is made easier through the bars that are shaded. I can intepret that the primary education criteria has more responses in the "don`t know" outcome. This suggests that because of the basic education acquired by this group of people, the cluster who said they "do not know" indicates that they might not have an idea on how to identify traits of corruption, to them, some of the conduct behaviour from the police might be seen as a norm by the people in this cluster. 
+
+### Question 2
+``` {r, Rerun the tables, echo= TRUE}
+# Create a contigency table, this time, with a dichotomous variable for the outcome
+round(prop.table(table(My_outcome.f2, My_group.f2, exclude = NA)* 100), digits = 2)
+```
+
+Rerunning the table gives a better correlation analysis of the bivariate analysis. What can be deduced from the table is that, there are more people under the higher education cluster who perceive the police as corrupt. This can be the same from the responses generated from the primary education group, where between less corruption and more corruption, there are higher responses from those who perceive the police as more corrupt.
+
+### Question 3
+```{r, difference of proportions, echo= TRUE}
+# Calculate mean and standard deviation
+  21032 / 38090
+
+# Now calculate the standard deviation
+prop.test(0.55, 38090, conf.level = 0.90)
+```
+Since my analysis was taken from a single population, I have used the sample of proportion method. My aim was to find out the extent of how corruption is perceived in Ghana. So I took the Most_Corrupt result from my outcome variable. It gave me a mean of the proportion 55%. From the statistical results, it can be deduced that the standard deviation spread is low, meaning the data can be relied upon. From the calculations, the p-value has been extracted from the confidence interval and since the p-value is positive, it can be concluded that the data is stastically significant. The null hypothesis indicated earlier on can thus be rejected because as indicated from the analysis p-value < 2.2e-16, it indicates strong evidence to the statistical findings. The surprise came as there was a less variation between the responses generating from between those who received Primary education and Higher Education. My expectations were that there would be a strong variation between the two groups in respect to their perception on corruption. In conclusion, the Hypothesis can be accepted and the perception of police corruption in Ghana is between 2.340184e-08 and 1.198119e-04 from the Primary educated people and Higher educated people in Ghana. 
+
+### Question 4
+
+# Comparative Analysis
+```{r, rerun my samples, echo= TRUE}
+# Use a comparative analysis with another outcome variable
+Economic_conditions <- as_factor(My_data$q7)
+levels(Economic_conditions) <- list("Much worse" = 1,
+                                    "Worse" = 2,
+                                    "Same" = 3,
+                                    "Better" = 4,
+                                    "Much Better" = 5,
+                                    "Don`t know" = 9)
+
+# create a contigency table 
+round(prop.table(table(Economic_conditions, My_group.f2, exclude = NA) * 100, margin = 2), digits = 2)
+```
+
+Generating a comparative analysis has brought a surprise on the response of "Much better". From both groups of my independent variable, better had the highest respondents. My expectation was that people would view the outcome of the Economic conditions as worse in the next 12 months because of the corruption seen in the police. Nevertheless, it appears that corruption in the police does not waiver the hope they have in the leadership. This includes the President`s Office and other bodies of economic governance.
